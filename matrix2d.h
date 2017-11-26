@@ -23,6 +23,7 @@ void            dm2dSetColumnTo (DoubleMatrix2D *matrix, int column, double valu
 void            dm2dPrint (DoubleMatrix2D *matrix);
 void            dm2dCopy (DoubleMatrix2D *to, DoubleMatrix2D *from);
 DoubleMatrix2D *readMatrix2dFromFile(FILE *f, int l, int c);
+void			writeMatrixToFile(DoubleMatrix2D* matrix, FILE* f, int N);
 
 #define         dm2dGetEntry(m,l,c)    m->data[((l)*m->n_c)+(c)]
 #define         dm2dSetEntry(m,l,c,v)  m->data[((l)*m->n_c)+(c)]=v

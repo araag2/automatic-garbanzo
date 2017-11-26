@@ -138,3 +138,14 @@ DoubleMatrix2D *readMatrix2dFromFile(FILE *f, int l, int c) {
 
   return m;
 }
+
+void writeMatrixToFile(DoubleMatrix2D* m, FILE* f, int N){
+  int i, j;
+  for(i = 0; i < N; i++){
+    for(j = 0; j < N; j++){
+      fprintf(f, "%lf ", dm2dGetEntry(m, i, j));
+    }
+    fputs("\n", f);
+  }
+}
+

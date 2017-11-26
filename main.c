@@ -215,6 +215,7 @@ int parse_multiple_or_exit(char const *str, char const *name, int N)
       else                  
         ResetCounter(ref_maxD);			 						// Reseting the variable which checks if the maxD condition was met
       
+
       temp = getMatrix_Aux;				 						// Switching the pointers around
       getMatrix_Aux = getMatrix;                                                 
       getMatrix = temp;
@@ -252,24 +253,26 @@ void Master_thread(int N, double tLeft, double tSup, double tRight, double tInf,
   int i;
 
   FILE* file = fopen(fichS, "r");
-  matrix = readMatrix2dFromFile(file, N+2, N+2);
-  fclose(file);
+  if (file != NULL){
+    matrix = readMatrix2dFromFile(file, N+2, N+2);
+    fclose(file);
+  }
 
-  if(matrix == NULL)
+  if(matrix == NULL){
     matrix = dm2dNew(N+2, N+2);
+    MatrixInitiation(matrix, N, tSup, tInf, tLeft, tRight);
+  }
   
   matrix_aux = dm2dNew(N+2, N+2);
-  //dm2dCopy(matrix_aux, matrix);  
+  dm2dCopy(matrix_aux, matrix);
 
   if (matrix == NULL || matrix_aux == NULL) {
     fprintf(stderr, "\nError: Could not alocate the memory to generate the matrix or the matrix_aux\n\n");
     return;
   }
 
-  MatrixInitiation(matrix_aux,N,tSup,tInf,tLeft,tRight);                                // Initializes the values of the matrix and the auxiliary matrix. It's
   dm2dCopy(matrix_aux, matrix);
-  
-
+ 
   slave_args = (args_mythread_t*)malloc(trab*sizeof(args_mythread_t));              // Allocates the necessary space for everything
   slaves     = (pthread_t*)malloc(trab*sizeof(pthread_t));
   
@@ -306,6 +309,17 @@ void Master_thread(int N, double tLeft, double tSup, double tRight, double tInf,
         fprintf(stderr, "\nError destroying mutex\n");
         return;
   }
+
+  dm2dPrint(matrix);
+
+  file = fopen(fichS, "w");
+  writeMatrixToFile(matrix, file, N+2);
+  fclose(file);
+
+  file = fopen(fichS, "r");
+  matrix = readMatrix2dFromFile(file, N+2, N+2);
+  fclose(file);
+
 
   dm2dPrint(matrix);
   free(slave_args);
